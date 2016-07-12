@@ -77,8 +77,9 @@ Vagrant.configure("2") do |config|
     sudo yum install -y mariadb-server
     sudo systemctl enable mariadb
     sudo systemctl start mariadb
-    mysql -e "CREATE DATABASE test_db"
-    mysql test_db < ~/db_dumps/dump.ogv2_staging.sql
+    ### import the db
+    # mysql -e "CREATE DATABASE ogv2_staging"
+    # mysql ogv2_staging < /home/vagrant/db_dumps/dump.ogv2_staging.sql
 
     # install tools
     sudo yum install -y vim
