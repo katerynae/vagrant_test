@@ -1,0 +1,37 @@
+------
+setup apache ssl
+------
+
+follow the steps for creating ssl crt & key (from the akami page, linked to on the app page)
+
+# BUT at the last step put the .crt & .key files in 
+  /etc/httpd/vhosts.d/certs/scc.crt
+  /etc/httpd/vhosts.d/certs/scc.key
+# note that i had to create these folders
+
+------
+setup apache wsgi module
+------
+
+sudo yum install mod_wsgi
+# this is an apache module that you were missing
+
+# for some reason i had duplicate files
+#   /etc/httpd/conf.d/scc.conf
+#   /etc/httpd/conf.d/ssc.conf
+# so i moved scc.conf to scc.conf.disabled
+
+cp /opt/pythonenv/v2_ordergroove-py27/v2/scc/apache/django.wsgi.bak /opt/pythonenv/v2_ordergroove-py27/v2/scc/apache/django.wsgi
+# this file is listed in /etc/httpd/conf.d/ssc.conf
+
+=> these django endpoints can be accessed from host browser
+
+------
+use the new "scc-env" wsgi
+------
+
+edited /etc/httpd/conf.d/scc.conf to point to new "/opt/pythonenv/scc-env" folder
+created "scc-env/scc/scc/apache/django.wsgi"
+ran server from there
+
+=> does not seem to be working

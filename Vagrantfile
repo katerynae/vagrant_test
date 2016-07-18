@@ -14,6 +14,8 @@ Vagrant.configure("2") do |config|
   # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = "centos/7"
 
+  config.ssh.forward_agent = true
+  # config.ssh.forward_x11 = true
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
@@ -26,7 +28,8 @@ Vagrant.configure("2") do |config|
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
-  # config.vm.network "private_network", ip: "192.168.33.10"
+  
+ config.vm.network "private_network", ip: "10.10.1.130"
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -40,8 +43,11 @@ Vagrant.configure("2") do |config|
   # config.vm.synced_folder "../data", "/vagrant_data"
 
   config.vm.synced_folder ".", "/vagrant"
-  config.vm.synced_folder "/opt/pythonenv", "/opt/pythonenv"
-  config.vm.synced_folder "~/db_dumps", "/home/vagrant/db_dumps"
+  config.vm.synced_folder "/opt/pythonenv", "/opt/pythonenv",
+    owner: "ordergroove", group: "dev"
+  config.vm.synced_folder "~/db_dumps", "/home/ordergroove/db_dumps"
+  config.vm.synced_folder "~/whiskey_settings", "/home/ordergroove/whiskey_settings"
+  config.vm.synced_folder "~/fernet_settings", "/home/ordergroove/fernet_settings"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -77,7 +83,34 @@ Vagrant.configure("2") do |config|
     sudo yum install -y mariadb-server
     sudo systemctl enable mariadb
     sudo systemctl start mariadb
-    ### import the db
+    #sudo touch /etc/yum.repos.d/mongodb-org-3.2.repo
+    #sudo yum install -y mongodb-org
+    sudo yum install gcc
+    sudo yum install httpd httpd-devel mod_ssl mod_wsgi
+    sudo service mongod start
+    sudo yum install openssl-devel
+    sudo yum install xmlsec1
+    sudo yum install xmlsec1-openssl
+    sudo yum install wget
+    sudo yum update && yum install yum-utils    
+
+    yum-config-manager --add-repo http://dl.fedoraproject.org/pub/epel/6/x86_64/
+    rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6
+    yum install libxml2 libxml2-devel #(2.7.6)
+    yum install libxslt-devel #(1.1.26-2.el6_3.1)
+    yum install xmlsec1 xmlsec1-devel #(1.2.16-2.el6)
+    yum install xmlsec1-openssl xmlsec1-openssl-devel #(1.2.16-2.el6)
+    yum install openssl openssl-devel #(1.0.0-27.el6_4.2)
+    yum install libmcrypt-devel #(2.5.8-9.el6)
+    yum install libtool-ltdl-devel #(2.2.6-15.5.el6)
+    yum install redis #(2.4.10-1.el6)
+
+    sudo yum install rabbitmq-server 
+    sudo yum install redis
+    sudo yum install memcached
+    sudo mkdir -p /var/log/ordergroove
+    sudo chown ordergroove:dev /var/log/ordergroove
+     ### import the db
     # mysql -e "CREATE DATABASE ogv2_staging"
     # mysql ogv2_staging < /home/vagrant/db_dumps/dump.ogv2_staging.sql
 
